@@ -10,7 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+
+
+
 @interface DataSocket : NSObject
+
+// wuwenhao
+@property (nonatomic , copy) void (^onPcmDataCallback)(NSDictionary *descDic, NSData *pcmData);
 
 - (void)start;
 - (void)stop;
