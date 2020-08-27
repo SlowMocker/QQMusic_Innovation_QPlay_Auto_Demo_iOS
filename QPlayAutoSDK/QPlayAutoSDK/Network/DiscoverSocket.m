@@ -76,8 +76,12 @@
 
 - (void)discover
 {
+    // 1 wifi
+    // 2 蓝牙
+    // 3 数据线
+    // 4 本地 socket
     NSLog(@"discovering... %@",self.broadcastIP);
-    NSString *msg = [NSString stringWithFormat:@"{\"Discover\":{\"DeviceIP\":\"%@\",\"DeviceID\":\"%@\",\"DataPort\":%d, \"CommandPort\":%d, \"ResultPort\":%d, \"DeviceType\":%d, \"ConnectType\":1, \"DeviceBrand\":\"%@\", \"DeviceName\":\"%@\"}}\r\n",self.localIP,self.appInfo.deviceId,LocalDataPort,LocalCommandPort,LocalResultPort,self.appInfo.deviceType,self.appInfo.brand,self.appInfo.name];
+    NSString *msg = [NSString stringWithFormat:@"{\"Discover\":{\"DeviceIP\":\"%@\",\"DeviceID\":\"%@\",\"DataPort\":%d, \"CommandPort\":%d, \"ResultPort\":%d, \"DeviceType\":%d, \"ConnectType\":4, \"DeviceBrand\":\"%@\", \"DeviceName\":\"%@\"}}\r\n",self.localIP,self.appInfo.deviceId,LocalDataPort,LocalCommandPort,LocalResultPort,self.appInfo.deviceType,self.appInfo.brand,self.appInfo.name];
     [self.discoverSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.broadcastIP  port:RemoteCommandPort withTimeout:-1 tag:0];
 }
 
