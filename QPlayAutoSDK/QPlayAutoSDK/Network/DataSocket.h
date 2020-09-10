@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // wuwenhao
 @property (nonatomic , copy) void (^onPcmDataCallback)(NSDictionary *descDic, NSData *pcmData);
+@property (nonatomic , copy) void (^onPicDataCallback)(NSDictionary *descDic, NSData *picData);
+@property (nonatomic , copy) void (^onLyricDataCallback)(NSDictionary *descDic, NSData *lyricData);
 
 - (void)start;
 - (void)stop;

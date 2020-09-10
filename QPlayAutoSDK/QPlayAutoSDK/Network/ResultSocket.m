@@ -59,6 +59,7 @@
         NSLog(@"ResultSocket host or port is invalid:%@ %d",self.destIP,self.destPort);
         return;
     }
+    NSLog(@"==================ResultSocket_SEND：%@",msg);
     [self.udpSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.destIP port:self.destPort withTimeout:-1 tag:0];
     
 }
@@ -80,7 +81,7 @@
 withFilterContext:(nullable id)filterContext
 {
     NSString *msg = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"ResultSocket recv result: %@",msg);
+//    NSLog(@"ResultSocket recv result: %@",msg);
     
     if (msg && [self.delegate respondsToSelector:@selector(onResultSocket:recvData:)])
     {

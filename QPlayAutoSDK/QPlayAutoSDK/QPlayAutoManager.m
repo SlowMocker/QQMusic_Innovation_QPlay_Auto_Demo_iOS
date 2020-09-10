@@ -69,6 +69,9 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 
 @property (nonatomic,strong) QPlayAutoListItem *rootItem;
 
+//// wuwenhao
+//@property (nonatomic , copy) void (^didReceivePCMDataCallback)(NSDictionary *descDic, NSData *pcmData);
+
 @end
 
 
@@ -87,6 +90,8 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 - (void)start:(QPlayAutoAppInfo*)appInfo
 {
     self.appInfo = appInfo;
+
+    //wuwenhao
     if (self.appInfo.deviceType!=APP_DEVICE_TYPE)
     {
         //App方式的不再用发广播，直接使用scheme拉起来连接
@@ -101,6 +106,47 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     self.commandSocket.delegate = self;
     
     self.dataSocket = [[DataSocket alloc] init];
+
+    // wuwenhao
+    __weak typeof(self) weakSelf = self;
+    self.dataSocket.onPcmDataCallback = ^(NSDictionary * _Nonnull descDic, NSData * _Nonnull pcmData) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (self.didReceivePCMDataCallback) {
+            self.didReceivePCMDataCallback(descDic, pcmData);
+        }
+        
+        NSDictionary *pcmDataDic = descDic[@"PCMData"];
+        NSString *songId = pcmDataDic[@"SongID"];
+        long packageIndex = ((NSNumber *)pcmDataDic[@"PackageIndex"]).longValue;
+        NSString *key = [NSString stringWithFormat:@"PCMData_%@_%ld", songId, packageIndex];
+        
+        QPlayAutoRequestInfo *req = [self.requestDic objectForKey:key];
+        if (req) {
+            if (req.finishBlock) {
+                BOOL success = (pcmData != nil);
+                NSMutableDictionary *contentDicM = NSMutableDictionary.new;
+                contentDicM[@"descDic"] = pcmDataDic;
+                contentDicM[@"pcmData"] = pcmData;
+                req.finishBlock(success, contentDicM.copy);
+            }
+        }
+        else {
+            NSLog(@"【ERROR】未找到 PCMData 回调: %@",key);
+        }
+    };
+    self.dataSocket.onPicDataCallback = ^(NSDictionary * _Nonnull descDic, NSData * _Nonnull picData) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (self.didReceivePICDataCallback) {
+            self.didReceivePICDataCallback(descDic, picData);
+        }
+    };
+    self.dataSocket.onLyricDataCallback = ^(NSDictionary * _Nonnull descDic, NSData * _Nonnull lyricData) {
+        __strong typeof(weakSelf) self = weakSelf;
+        if (self.didReceiveLyricDataCallback) {
+            self.didReceiveLyricDataCallback(descDic, lyricData);
+        }
+    };
+
     [self.dataSocket start];
     self.requestDic = [[NSMutableDictionary alloc]init];
     
@@ -270,23 +316,23 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     return req.requestNo;
 }
 
-//查询歌曲图片
-- (void)requestAlbumImage:(NSString*)songId pageIndex:(NSUInteger)pageIndex
-{
-    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
-    [self.requestDic setObject:req forKey:req.key];
-    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\", \"PackageIndex\":%tu}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PICData,songId,pageIndex];
-    [self.commandSocket sendMsg:msg];
-}
-
-//查询歌词
-- (void)requestLyric:(NSString*)songId lyricType:(NSInteger)lyricType
-{
-    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
-    [self.requestDic setObject:req forKey:req.key];
-    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":,\"LyricType\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_LyricData,songId,lyricType];
-    [self.commandSocket sendMsg:msg];
-}
+////查询歌曲图片
+//- (void)requestAlbumImage:(NSString*)songId pageIndex:(NSUInteger)pageIndex
+//{
+//    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
+//    [self.requestDic setObject:req forKey:req.key];
+//    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\", \"PackageIndex\":%tu}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PICData,songId,pageIndex];
+//    [self.commandSocket sendMsg:msg];
+//}
+//
+////查询歌词
+//- (void)requestLyric:(NSString*)songId lyricType:(NSInteger)lyricType
+//{
+//    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
+//    [self.requestDic setObject:req forKey:req.key];
+//    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":,\"LyricType\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_LyricData,songId,lyricType];
+//    [self.commandSocket sendMsg:msg];
+//}
 
 //在线搜索歌曲
 - (void)requestSearch:(NSString*)keyword pageIndex:(NSUInteger)pageIndex callback:(QPlayAutoRequestFinishBlock)block
@@ -316,11 +362,56 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 }
 
 //查询歌曲播放信息
+- (void)requestMediaInfo:(NSString*)songId callback:(QPlayAutoRequestFinishBlock)block
+{
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:block];
+    [self.requestDic setObject:req forKey:req.key];
+    NSString *msg = [NSString stringWithFormat:@"{ \"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\"}}\r\n",(long)req.requestNo,kQPlayAutoCmd_MediaInfo,songId];
+    [self.commandSocket sendMsg:msg];
+}
+
+//查询歌曲播放信息
 - (void)requestPcmData:(NSString*)songId packageIndex:(NSUInteger)packageIndex
 {
     QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
     [self.requestDic setObject:req forKey:req.key];
     NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\", \"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PCMData,songId,packageIndex];
+    [self.commandSocket sendMsg:msg];
+}
+
+// wuwenhao
+//查询歌曲播放信息
+- (void)requestPcmData:(NSString*)songId packageIndex:(NSUInteger)packageIndex callback:(QPlayAutoRequestFinishBlock)block {
+    NSString *pcmRequestKey = [NSString stringWithFormat:@"PCMData_%@_%ld",songId, (long)packageIndex];
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestKey:pcmRequestKey finishBlock:block];
+    [self.requestDic setObject:req forKey:req.key];
+    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\", \"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PCMData,songId,packageIndex];
+    [self.commandSocket sendMsg:msg];
+}
+// wuwenhao
+// 停止传输数据
+// 1: PCM 数据 | 2: 图片数据 | 3: 歌词数据
+- (void)stopData:(NSString*)songId dataType:(NSInteger)type callback:(QPlayAutoRequestFinishBlock)block {
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:block];
+    [self.requestDic setObject:req forKey:req.key];
+    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\", \"Arguments\":{\"SongID\":\"%@\",\"DataType\":%ld}}\r\n",(long)req.requestNo,QPLAYAUTO_CMD_STOP_DATA,songId,(long)type];
+    [self.commandSocket sendMsg:msg];
+}
+
+//查询歌曲图片
+- (void)requestAlbumImage:(NSString*)songId pageIndex:(NSUInteger)pageIndex
+{
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
+    [self.requestDic setObject:req forKey:req.key];
+    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\", \"PackageIndex\":%tu}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PICData,songId,pageIndex];
+    [self.commandSocket sendMsg:msg];
+}
+
+// wuwenhao
+- (void) requestLyric:(NSString*)songId lyricType:(NSInteger)lyricType pageIndex:(NSUInteger)pageIndex {
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:nil];
+    [self.requestDic setObject:req forKey:req.key];
+    NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":%zd,\"LyricType\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_LyricData,songId, pageIndex,lyricType];
     [self.commandSocket sendMsg:msg];
 }
 
@@ -463,8 +554,8 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
         self.lastHeartbeatTime = [NSDate timeIntervalSinceReferenceDate];
         return;
     }
-    
-    NSLog(@"Recv command:%@",cmdDict);
+
+    NSLog(@"==================CommandSocket_RECV：%@",cmdDict);
     
     if ([cmd isEqualToString:kQPlayAutoCmd_CommInfos])
     {
@@ -499,6 +590,8 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 {
     NSError *error = nil;
     NSDictionary *resultDict =  [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+
+    NSLog(@"==================ResultSocket_RECV：%@",resultDict);
     
     NSString *eventName = [resultDict objectForKey:@"Event"];
     if (eventName.length>0)
@@ -543,7 +636,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     QPlayAutoRequestInfo * req = [self.requestDic objectForKey:reqIdStr];
     if(req)
     {
-        if (req.finishBlock)
+        if (req.finishBlock && ![strKey.lowercaseString containsString:@"pcmdata"])
         {
             BOOL success = (err== nil) || ([self changeWithValue:err] == 0);
             req.finishBlock(success, contentDict);
@@ -574,6 +667,6 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 }
 
 - (void)onDiscoversocket:(nonnull DiscoverSocket *)socket {
-    
+    NSLog(@"onDiscoversocket");
 }
 @end

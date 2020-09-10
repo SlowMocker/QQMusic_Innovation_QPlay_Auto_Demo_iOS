@@ -18,9 +18,9 @@
 #define LocalCommandPort     (43911)
 #define LocalResultPort      (43912)
 #define LocalDataPort        (43913)
-#define PCMBufSize      (1024)
-#define PicBufSize      (1024)
-#define LrcBufSize      (1024)
+#define PCMBufSize      (1024*100)
+#define PicBufSize      (1024*1024)
+#define LrcBufSize      (1024*1024)
 
 #define NormalPageSize  (30)
 

@@ -76,7 +76,7 @@
         NSLog(@"cmdsocket host or port is invalid:%@ %d",self.destIP,self.destPort);
         return;
     }
-    NSLog(@"向QQ音乐发送：%@",msg);
+    NSLog(@"==================CommandSocket_SEND：%@",msg);
     [self.udpSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.destIP port:self.destPort withTimeout:-1 tag:0];
 }
 
