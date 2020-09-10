@@ -8,13 +8,11 @@
 
 #import "ViewController.h"
 #import "QPlayAutoSDK.h"
+#import "QPlayAutoManager.h"
+#import "TestViewController.h"
 
-#define NormalPageSize  (30)
-#define ID_GO_BACK @"GO_BACK"
-#define ID_SEARCH @"SEARCH"
 
-static NSString * const App_ID = @"118";//QQ音乐申请的
-static NSString * const App_PrivateKey = @"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAN4whoWuL1M7gYZRUs/pMCkPlyrm9coqgTwMoOYmjpFWfiwU6rJiKVpMMKcTq97jw1XVeTdamnIg/Ds4tFW+hm1P8HN+f+LJ3ZLFoxwc0jhKKrKMDXP8E2vgZnMmdQJzuK2SVKEjgasS6k7sqrVMqZfBW4qV2X/MrFDAuiL7V5K/AgMBAAECgYAIBXx1ywoOWTGd5cW1l9eTQ+rTM69f8xTjVBli9bVj7dl0QfUPJ5gSmHmRLpaf310n9iMAKpc005gHk05/Yfd8XZCF9cmj02fHHldCQezNu7D7OYCfFhu+Qs3/ETXdKBZjq+IXLLPgFzxVk18tq1JU4K00eGn0eYSSteN0AKOlsQJBAPglc2fqZpGzdapK2b7jb2VTpKnyLlVgri+Wa37ALj8GAsoBQ+bvAWHibElQDGGOL8L2ZqSk74sk/03z/wjMkoMCQQDlOMQcr7YZ6VqNITqqNO9b/6Nc0kgrQtKfQac6G5QoMib3T1rFOTRIds9pD6xToK+6pzwA9NiXG/WlLV/hRNoVAkEAwW0H6U+Ihjg6FvTjiG1mbrhlWWeDAGAtRsDcp9+L7Op1kBquYDubez5wpDD2hbC8wB8rYVmDs5WyQIRaHvS/mwJBAIMrk9YSmvOC/OVsEYUbG6oaxOI2F0RiTeMCj+6Jn6PM5014pKndzVR2YMRvSp7kggse7hBiDJuUTWLDb22al+0CQEasXTReC4vUCK1tSNOWLy35gifvrUjhA1JcqR2A/ES6hCXvYLdaU4AglB7l4t9Wxjx0//yXZamLGr/oIVtzv/c=";//RSA私钥
+
 
 @interface ViewController ()<QPlayAutoSDKDelegate,UITableViewDelegate,UITableViewDataSource>
 
@@ -45,28 +43,33 @@ static NSString * const App_PrivateKey = @"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwg
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
     // Do any additional setup after loading the view, typically from a nib.
-    QPlayAutoAppInfo *appInfo = [[QPlayAutoAppInfo alloc] init];
-    appInfo.deviceId = @"AC:88:FD:75:32:4B";
-    appInfo.scheme = @"qplayautodemo://";
-    appInfo.brand = @"MOSI";
-    appInfo.name = @"skYline";
-    appInfo.bundleId = @"com.mosi.QPlaYauto";
-    appInfo.appId = App_ID;
-    appInfo.secretKey = App_PrivateKey;
-//    appInfo.deviceType = APP_DEVICE_TYPE;
-    // 1 车机模式
-    // 2 手表
-    // 3 APP 模式
-    appInfo.deviceType = 1;
-    [QPlayAutoSDK registerApp:appInfo delegate:self];
-    [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"qplayautocell"];
-    self.tableview.delegate = self;
-    self.tableview.dataSource = self;
-    self.imageCache = [[NSMutableDictionary alloc]init];
-    [self.btnConnect setTitleColor:[UIColor colorWithRed:50.f/255 green:188.f/255 blue:108.f/255 alpha:1] forState:UIControlStateNormal];
-    [self.btnMore setTitleColor:self.btnConnect.currentTitleColor forState:UIControlStateNormal];
-    [self setupUI];
+//    QPlayAutoAppInfo *appInfo = [[QPlayAutoAppInfo alloc] init];
+//    appInfo.deviceId = @"qplayauto123";
+//    appInfo.scheme = @"qplayautodemo://";
+//    appInfo.brand = @"QQMusic";
+//    appInfo.name = @"QPlayAutoDemo";
+//    appInfo.bundleId = @"com.tencent.QPlayAutoDemo";
+//    appInfo.appId = App_ID;
+//    appInfo.secretKey = App_PrivateKey;
+//    // 1: 车机 | 2: 电表 | 3: APP
+//    appInfo.deviceType = 1;
+//    [QPlayAutoSDK registerApp:appInfo delegate:self];
+//    [self.tableview registerClass:[UITableViewCell class] forCellReuseIdentifier:@"qplayautocell"];
+//    self.tableview.delegate = self;
+//    self.tableview.dataSource = self;
+//    self.imageCache = [[NSMutableDictionary alloc]init];
+//    [self.btnConnect setTitleColor:[UIColor colorWithRed:50.f/255 green:188.f/255 blue:108.f/255 alpha:1] forState:UIControlStateNormal];
+//    [self.btnMore setTitleColor:self.btnConnect.currentTitleColor forState:UIControlStateNormal];
+//    [self setupUI];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    TestViewController *testVc = [[TestViewController alloc]init];
+    [self presentViewController:testVc animated:YES completion:nil];
 }
 
 - (void)setupUI {
@@ -135,21 +138,71 @@ static NSString * const App_PrivateKey = @"MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwg
 }
 
 - (IBAction)onClickPlayPause:(id)sender {
-    if(self.isConnected==NO)
-        return;
-    if(self.playState == QPlayAutoPlayState_Playing)
-    {
-        [QPlayAutoSDK playerPlayPause];
-    }
-    else
-    {
-        [QPlayAutoSDK playerResume:^(BOOL success, NSDictionary *dict) {
-            if (!success)
-            {
-                [self showErrorCodeAlert:[NSString stringWithFormat:@"%@",dict]];
-            }
-        }];
-    }
+
+    // 暂停播放
+    [QPlayAutoSDK playerPlayPause];
+
+    [QPlayAutoManager sharedInstance].didReceivePCMDataCallback = ^(NSDictionary * _Nonnull descDic, NSData * _Nonnull pcmData) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:1 callback:^(BOOL success, NSDictionary *dict) {
+
+            }];
+        });
+    };
+
+    // 请求 media info，QQ 音乐开始解码
+    [[QPlayAutoManager sharedInstance] requestMediaInfo:self.currentSong.ID callback:^(BOOL success, NSDictionary *dict) {
+        if (success) {
+
+            // 请求 media info 成功回调
+            // 请求 PCM pi = 0
+            [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:0 callback:^(BOOL success, NSDictionary *dict) {
+                if (success) {
+
+//                    [[QPlayAutoManager sharedInstance] stopData:self.currentSong.ID dataType:1 callback:^(BOOL success, NSDictionary *dict) {
+//
+//                        if (success) {
+//                            [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:1 callback:^(BOOL success, NSDictionary *dict) {
+//                                if (success) {
+//
+//                                    [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:2 callback:^(BOOL success, NSDictionary *dict) {
+//                                        if (success) {
+//
+//                                            NSLog(@"\n\n\n\nNiuBest\n\n\n\n");
+//                                        }
+//                                    }];
+//                                }
+//                            }];
+//                        }
+//                    }];
+                }
+            }];
+        }
+    }];
+
+    // 请求 media info，QQ 音乐开始解码
+//    [[QPlayAutoManager sharedInstance] requestMediaInfo:self.currentSong.ID callback:^(BOOL success, NSDictionary *dict) {
+//        if (success) {
+//
+//            // 请求 media info 成功回调
+//            // 请求 PCM pi = 0
+//            [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:0];
+//
+//            NSLog(@"\n\n\n\n\n\n\n");
+//            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//                // 请求 PCM pi = 1
+//                [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:1];
+//
+//                NSLog(@"\n\n\n\n\n\n\n");
+//                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//
+//                    // 请求 PCM pi = 2
+//                    [[QPlayAutoManager sharedInstance] requestPcmData:self.currentSong.ID packageIndex:2];
+//                });
+//            });
+//        }
+//    }];
 }
 
 - (IBAction)onClickPlayPrev:(id)sender {

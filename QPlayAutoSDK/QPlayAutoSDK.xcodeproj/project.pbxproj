@@ -22,6 +22,23 @@
 		9DA98FD721903EDF00247F22 /* QPlayAutoEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA98FD621903EDF00247F22 /* QPlayAutoEntity.m */; };
 		9DA98FDA21903F2900247F22 /* QPlayAutoManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA98FD921903F2900247F22 /* QPlayAutoManager.m */; };
 		9DA98FE72192824400247F22 /* QQMusicUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA98FE62192824400247F22 /* QQMusicUtils.m */; };
+		FF3E8A5C2509C1E90098FAF9 /* QPlayAutoManager.h in Copy Files */ = {isa = PBXBuildFile; fileRef = 9DA98FD821903F2900247F22 /* QPlayAutoManager.h */; };
+		FF3E8A5E2509C22D0098FAF9 /* QMRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D1664BB21F6B43F00F151B4 /* QMRSA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A5F2509C22D0098FAF9 /* QPlayAutoEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FD521903EDF00247F22 /* QPlayAutoEntity.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A602509C22D0098FAF9 /* CommandSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FA3219038E600247F22 /* CommandSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A612509C22D0098FAF9 /* DiscoverSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F99219036D300247F22 /* DiscoverSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A622509C22D0098FAF9 /* QMNetworkHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F9C2190371D00247F22 /* QMNetworkHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A632509C22D0098FAF9 /* DataSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FA621903A3C00247F22 /* DataSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A642509C22D0098FAF9 /* HeartbeatSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FA921903A6A00247F22 /* HeartbeatSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A652509C22D0098FAF9 /* ResultSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FAC21903B3000247F22 /* ResultSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A662509C22D0098FAF9 /* CocoaAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F90219035A700247F22 /* CocoaAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A672509C22D0098FAF9 /* GCDAsyncSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F92219035A700247F22 /* GCDAsyncSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A682509C22D0098FAF9 /* GCDAsyncUdpSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F94219035A700247F22 /* GCDAsyncUdpSocket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A692509C22D0098FAF9 /* QPlayAutoSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F73219030C200247F22 /* QPlayAutoSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A6A2509C22D0098FAF9 /* QMMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98F9F219037E100247F22 /* QMMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A6B2509C22D0098FAF9 /* QPlayAutoManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FD821903F2900247F22 /* QPlayAutoManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A6C2509C22D0098FAF9 /* QQMusicUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 9DA98FE52192824400247F22 /* QQMusicUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		FF3E8A6D2509C22D0098FAF9 /* QPlayAutoDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D689DA6219FFF6E00634F99 /* QPlayAutoDefine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +48,7 @@
 			dstPath = include;
 			dstSubfolderSpec = 16;
 			files = (
+				FF3E8A5C2509C1E90098FAF9 /* QPlayAutoManager.h in Copy Files */,
 				9D689DA7219FFF8800634F99 /* QPlayAutoDefine.h in Copy Files */,
 				9DA98F76219030C200247F22 /* QPlayAutoSDK.h in Copy Files */,
 			);
@@ -169,11 +187,38 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		FF3E8A5D2509C2100098FAF9 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF3E8A5E2509C22D0098FAF9 /* QMRSA.h in Headers */,
+				FF3E8A5F2509C22D0098FAF9 /* QPlayAutoEntity.h in Headers */,
+				FF3E8A602509C22D0098FAF9 /* CommandSocket.h in Headers */,
+				FF3E8A612509C22D0098FAF9 /* DiscoverSocket.h in Headers */,
+				FF3E8A622509C22D0098FAF9 /* QMNetworkHelper.h in Headers */,
+				FF3E8A632509C22D0098FAF9 /* DataSocket.h in Headers */,
+				FF3E8A642509C22D0098FAF9 /* HeartbeatSocket.h in Headers */,
+				FF3E8A652509C22D0098FAF9 /* ResultSocket.h in Headers */,
+				FF3E8A662509C22D0098FAF9 /* CocoaAsyncSocket.h in Headers */,
+				FF3E8A672509C22D0098FAF9 /* GCDAsyncSocket.h in Headers */,
+				FF3E8A682509C22D0098FAF9 /* GCDAsyncUdpSocket.h in Headers */,
+				FF3E8A692509C22D0098FAF9 /* QPlayAutoSDK.h in Headers */,
+				FF3E8A6A2509C22D0098FAF9 /* QMMacros.h in Headers */,
+				FF3E8A6B2509C22D0098FAF9 /* QPlayAutoManager.h in Headers */,
+				FF3E8A6C2509C22D0098FAF9 /* QQMusicUtils.h in Headers */,
+				FF3E8A6D2509C22D0098FAF9 /* QPlayAutoDefine.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		9DA98F6F219030C200247F22 /* QPlayAutoSDK */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9DA98F79219030C200247F22 /* Build configuration list for PBXNativeTarget "QPlayAutoSDK" */;
 			buildPhases = (
+				FF3E8A5D2509C2100098FAF9 /* Headers */,
 				9DA98F6C219030C200247F22 /* Sources */,
 				9DA98F6D219030C200247F22 /* Frameworks */,
 				9DA98F6E219030C200247F22 /* Copy Files */,

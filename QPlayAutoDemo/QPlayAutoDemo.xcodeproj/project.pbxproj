@@ -15,6 +15,8 @@
 		9DA98FCC21903DD700247F22 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9DA98FCA21903DD700247F22 /* LaunchScreen.storyboard */; };
 		9DA98FCF21903DD700247F22 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9DA98FCE21903DD700247F22 /* main.m */; };
 		9DA98FE321905AF300247F22 /* images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9DA98FE221905AF200247F22 /* images.xcassets */; };
+		FF3E8A5B2509C1A30098FAF9 /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FF3E8A5A2509C1A30098FAF9 /* TestViewController.m */; };
+		FF3E8A702509C28C0098FAF9 /* MPcmPlaYer.m in Sources */ = {isa = PBXBuildFile; fileRef = FF3E8A6E2509C28C0098FAF9 /* MPcmPlaYer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,10 @@
 		9DA98FDE2190404F00247F22 /* libQPlayLinkSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libQPlayLinkSDK.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DA98FE02190414700247F22 /* libQPlayLinkSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libQPlayLinkSDK.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DA98FE221905AF200247F22 /* images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = images.xcassets; sourceTree = "<group>"; };
+		FF3E8A592509C1A30098FAF9 /* TestViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
+		FF3E8A5A2509C1A30098FAF9 /* TestViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
+		FF3E8A6E2509C28C0098FAF9 /* MPcmPlaYer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MPcmPlaYer.m; sourceTree = "<group>"; };
+		FF3E8A6F2509C28C0098FAF9 /* MPcmPlaYer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MPcmPlaYer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +73,10 @@
 		9DA98FBE21903DD500247F22 /* QPlayAutoDemo */ = {
 			isa = PBXGroup;
 			children = (
+				FF3E8A6F2509C28C0098FAF9 /* MPcmPlaYer.h */,
+				FF3E8A6E2509C28C0098FAF9 /* MPcmPlaYer.m */,
+				FF3E8A592509C1A30098FAF9 /* TestViewController.h */,
+				FF3E8A5A2509C1A30098FAF9 /* TestViewController.m */,
 				9DA98FE221905AF200247F22 /* images.xcassets */,
 				9DA98FBF21903DD500247F22 /* AppDelegate.h */,
 				9DA98FC021903DD500247F22 /* AppDelegate.m */,
@@ -170,6 +180,8 @@
 			files = (
 				9DA98FC421903DD500247F22 /* ViewController.m in Sources */,
 				9DA98FCF21903DD700247F22 /* main.m in Sources */,
+				FF3E8A702509C28C0098FAF9 /* MPcmPlaYer.m in Sources */,
+				FF3E8A5B2509C1A30098FAF9 /* TestViewController.m in Sources */,
 				9DA98FC121903DD500247F22 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
