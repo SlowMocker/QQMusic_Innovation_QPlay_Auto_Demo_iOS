@@ -124,10 +124,10 @@ NSString *const kQPlayAutoArgument_State = @"State";
     }
     return self;
 }
-- (instancetype)initWithRequestKey:(NSString *)requestKey finishBlock:(QPlayAutoRequestFinishBlock)finishBlock {
+- (instancetype)initWithRequestKey:(NSString *)requestKey requestNO:(NSInteger)requestNO finishBlock:(QPlayAutoRequestFinishBlock)finishBlock {
     if(self = [super init])
     {
-        self.requestNo = 99999999999999;
+        self.requestNo = requestNO;
         self.finishBlock = finishBlock;
         self.key = requestKey;
     }

@@ -293,7 +293,7 @@ static NSString * const QQMusic_PubKey = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBg
                         NSString *openToken = [decryptDict objectForKey:kScheme_OpenToken];
                          [resultDict setObject:openID forKey:kScheme_OpenId];
                         [resultDict setObject:openToken forKey:kScheme_OpenToken];
-                        NSLog(@"验证通过 OpenID:%@,OpenToken:%@",openID,openToken);
+                        //NSLog(@"验证通过 OpenID:%@,OpenToken:%@",openID,openToken);
                     }
                 }
             }

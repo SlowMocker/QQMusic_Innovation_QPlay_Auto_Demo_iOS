@@ -31,7 +31,7 @@
     
     if (![self.udpSocket bindToPort:0 error:&error])
     {
-        NSLog(@"Error binding: %@", error);
+        //NSLog(@"Error binding: %@", error);
         return;
     }
     
@@ -60,7 +60,7 @@
 {
     if(self.destIP.length==0 || self.destPort==0)
     {
-        NSLog(@"heartbeat host or port is invalid:%@ %d",self.destIP,self.destPort);
+        //NSLog(@"heartbeat host or port is invalid:%@ %d",self.destIP,self.destPort);
         return;
     }
     NSString *msg = @"{\"RequestID\":123,\"Request\":\"Heartbeat\"}\r\n";
@@ -76,7 +76,7 @@
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError * _Nullable)error
 {
-    NSLog(@"heartbeat failed:%@",error);
+    //NSLog(@"heartbeat failed:%@",error);
 }
 
 @end

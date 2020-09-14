@@ -53,7 +53,7 @@
     NSError *error = nil;
     if (![self.tcpSocket acceptOnPort:LocalDataPort error:&error])
     {
-        NSLog(@"Error acceptOnPort: %@", error);
+        //NSLog(@"Error acceptOnPort: %@", error);
         return;
     }
 }
@@ -78,29 +78,29 @@
 
 - (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket
 {
-//    NSLog(@"******************didAcceptNewSocket");
+//    //NSLog(@"******************didAcceptNewSocket");
     if(newSocket==nil)
         return;
     if(self.qmSocket!=nil)
     {
-//        NSLog(@"dataSocket cliet socket is exist already. new:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
+//        //NSLog(@"dataSocket cliet socket is exist already. new:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
         return;
     }
     self.qmSocket = newSocket;
     [self.qmSocket readDataWithTimeout:-1 tag:0];
-//    NSLog(@"dataSocket didAcceptNewSocket:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
+//    //NSLog(@"dataSocket didAcceptNewSocket:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
     
 }
 
 - (void) socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
-//    NSLog(@"******************socketDidDisconnect:%@",err);
+//    //NSLog(@"******************socketDidDisconnect:%@",err);
 }
 
 - (void) socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
 
-    NSLog(@"\n\n\n\n\n");
-    NSLog(@"***********************");
-    NSLog(@"data length: %ld", (long)data.length);
+    //NSLog(@"\n\n\n\n\n");
+    //NSLog(@"***********************");
+    //NSLog(@"data length: %ld", (long)data.length);
 
     // 解析 JSON 头
     // 同步接口
@@ -144,8 +144,8 @@
     // PCM
     if ([self.descPcmDicM.allKeys containsObject:@"PCMData"]) {
         if (self.pcmDataM.length >= ((NSNumber *)self.descPcmDicM[@"PCMData"][@"Length"]).integerValue && self.onPcmDataCallback) {
-            NSLog(@"\ndesc: %@",self.descPcmDicM);
-            NSLog(@"pcm return size: %ld",(long)self.pcmDataM.length);
+            //NSLog(@"\ndesc: %@",self.descPcmDicM);
+            //NSLog(@"pcm return size: %ld",(long)self.pcmDataM.length);
             self.onPcmDataCallback(self.descPcmDicM, self.pcmDataM);
             [self flushPcmData];
         }
@@ -155,8 +155,8 @@
     if ([self.descPicDicM.allKeys containsObject:@"PICData"]) {
 
         if (self.picDataM.length >= ((NSNumber *)self.descPicDicM[@"PICData"][@"Length"]).integerValue && self.onPicDataCallback) {
-            NSLog(@"\ndesc: %@",self.descPicDicM);
-            NSLog(@"pic return size: %ld",(long)self.picDataM.length);
+            //NSLog(@"\ndesc: %@",self.descPicDicM);
+            //NSLog(@"pic return size: %ld",(long)self.picDataM.length);
             self.onPicDataCallback(self.descPicDicM, self.picDataM);
             [self flushPicData];
         }
@@ -166,21 +166,21 @@
     if ([self.descLyricDicM.allKeys containsObject:@"LyricData"]) {
 
         if (self.lyricDataM.length >= ((NSNumber *)self.descLyricDicM[@"LyricData"][@"Length"]).integerValue && self.onLyricDataCallback) {
-            NSLog(@"\ndesc: %@",self.descLyricDicM);
-            NSLog(@"lyric return size: %ld",(long)self.lyricDataM.length);
+            //NSLog(@"\ndesc: %@",self.descLyricDicM);
+            //NSLog(@"lyric return size: %ld",(long)self.lyricDataM.length);
             self.onLyricDataCallback(self.descLyricDicM, self.lyricDataM);
             [self flushLyricData];
         }
     }
 
-    NSLog(@"***********************\n\n\n\n\n");
+    //NSLog(@"***********************\n\n\n\n\n");
     [self.qmSocket readDataWithTimeout:-1 tag:0];
 }
 
 #pragma mark - private methods
 - (void) parseData:(NSData *)data callback:(void (^)(NSDictionary *descDic, NSData *partData, NSString *errDes))callback {
     if (data.length <= 0) {
-        NSLog(@"【ERROR】: data socket 返回数据异常！！！");
+        //NSLog(@"【ERROR】: data socket 返回数据异常！！！");
         if (callback) callback(nil, nil, @"data socket 返回数据异常");
     }
 
@@ -204,7 +204,7 @@
         }
     }
 
-    //    NSLog(@"**************************************************************header: %ld",(long)(sRange.location + 2));
+    //    //NSLog(@"**************************************************************header: %ld",(long)(sRange.location + 2));
 
     // 未找到，是纯数据
     if (sRange.length == 0) {

@@ -94,7 +94,7 @@
 //    @[ IOS_VPN @"/" IP_ADDR_IPv6, IOS_VPN @"/" IP_ADDR_IPv4, IOS_WIFI @"/" IP_ADDR_IPv6, IOS_WIFI @"/" IP_ADDR_IPv4, IOS_CELLULAR @"/" IP_ADDR_IPv6, IOS_CELLULAR @"/" IP_ADDR_IPv4 ] ;
 //
 //    NSDictionary *addresses = [self getIPAddresses];
-//    NSLog(@"addresses: %@", addresses);
+//    //NSLog(@"addresses: %@", addresses);
 //
 //    __block NSString *address;
 //    [searchArray enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop)
@@ -126,7 +126,7 @@
             NSRange resultRange = [firstMatch rangeAtIndex:0];
             NSString *result=[ipAddress substringWithRange:resultRange];
             //输出结果
-            NSLog(@"%@",result);
+            //NSLog(@"%@",result);
             return YES;
         }
     }

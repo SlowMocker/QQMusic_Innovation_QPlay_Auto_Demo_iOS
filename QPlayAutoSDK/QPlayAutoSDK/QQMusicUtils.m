@@ -13,7 +13,7 @@
 
 + (NSDictionary *)paserURLParam:(NSURL *)url
 {
-    NSLog(@"URL PARAMTER STR:%@",url);
+    //NSLog(@"URL PARAMTER STR:%@",url);
     NSString *strURL = [url absoluteString];
     
     NSRange range = [strURL rangeOfString:@"?"];
@@ -50,7 +50,7 @@
         if (!val) val = @"";
         [ret setObject:val forKey:key];
     }
-    NSLog(@"URL PARAMTER:%@",ret);
+    //NSLog(@"URL PARAMTER:%@",ret);
     return ret;
 }
 
@@ -134,7 +134,7 @@
     }
     if (data == nil)
     {
-        NSLog(@"data:(%@)", data);
+        //NSLog(@"data:(%@)", data);
         return nil;
     }
     id obj = nil;
@@ -142,21 +142,21 @@
         obj = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:error];
     }
     @catch (NSException *exception) {
-        NSLog(@"json exception:%@", exception);
+        //NSLog(@"json exception:%@", exception);
         NSAssert(NO, @"got a exception!");
     }
     
     if (nil != *error)
     {
         NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"parse json error(%@), data:(%@)", *error, json);
+        //NSLog(@"parse json error(%@), data:(%@)", *error, json);
     }
     if ((nil != obj)
         && (Nil != targetClass)
         && (NO == [obj isKindOfClass:targetClass]))
     {
         NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        NSLog(@"parse json expect class:(%@), actually:(%@) data:(%@)", targetClass, [obj class], json);
+        //NSLog(@"parse json expect class:(%@), actually:(%@) data:(%@)", targetClass, [obj class], json);
         
         obj = nil;  // 类型不对，返回nil
     }
@@ -178,7 +178,7 @@
         }
     }
     
-    NSLog(@"-JSONRepresentation failed. Error is: %@", error);
+    //NSLog(@"-JSONRepresentation failed. Error is: %@", error);
     return nil;
 }
 
@@ -190,7 +190,7 @@
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:strUrl] options:@{} completionHandler:^(BOOL success) {
             if (!success)
             {
-                NSLog(@"openUrl失败,%@",strUrl);
+                //NSLog(@"openUrl失败,%@",strUrl);
             }
         }];
     }
@@ -198,7 +198,7 @@
     {
         if (NO ==[[UIApplication sharedApplication] openURL:[NSURL URLWithString:strUrl]])
         {
-            NSLog(@"openUrl失败,%@",strUrl);
+            //NSLog(@"openUrl失败,%@",strUrl);
         }
     }
 }

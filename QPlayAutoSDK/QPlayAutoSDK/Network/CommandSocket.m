@@ -42,17 +42,17 @@
     
     if (![self.udpSocket bindToPort:LocalCommandPort error:&error])
     {
-        NSLog(@"cmdsocket Error binding: %@", error);
+        //NSLog(@"cmdsocket Error binding: %@", error);
         return;
     }
     
     if (![self.udpSocket beginReceiving:&error])
     {
-        NSLog(@"cmdsocket Error receiving: %@", error);
+        //NSLog(@"cmdsocket Error receiving: %@", error);
         return;
     }
     
-    NSLog(@"cmdsocket bind on:%d",LocalCommandPort);
+    //NSLog(@"cmdsocket bind on:%d",LocalCommandPort);
     
 }
 
@@ -73,10 +73,10 @@
 {
     if(self.destIP.length==0 || self.destPort==0)
     {
-        NSLog(@"cmdsocket host or port is invalid:%@ %d",self.destIP,self.destPort);
+        //NSLog(@"cmdsocket host or port is invalid:%@ %d",self.destIP,self.destPort);
         return;
     }
-    NSLog(@"==================CommandSocket_SEND：%@",msg);
+    //NSLog(@"==================CommandSocket_SEND：%@",msg);
     [self.udpSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.destIP port:self.destPort withTimeout:-1 tag:0];
 }
 
@@ -89,21 +89,22 @@
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address
 {
-    NSLog(@"cmdsocket didConnectToAddress：%@",address);
+    //NSLog(@"cmdsocket didConnectToAddress：%@",address);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotConnect:(NSError * _Nullable)error
 {
-    NSLog(@"cmdsocket connect error：%@",error);
+    //NSLog(@"cmdsocket connect error：%@",error);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
 {
-    NSLog(@"cmdsocket发送数据成功 %ld",tag);}
+    //NSLog(@"cmdsocket发送数据成功 %ld",tag);
+}
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError * _Nullable)error
 {
-    NSLog(@"cmdsocket发送数据错误：%@",error);
+    //NSLog(@"cmdsocket发送数据错误：%@",error);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
@@ -118,12 +119,12 @@ withFilterContext:(nullable id)filterContext
         {
             self.destAddress = address;
             self.destIP = host;
-            NSLog(@"cmdsocket recv from addr:%@ %hu",host,port);
+            //NSLog(@"cmdsocket recv from addr:%@ %hu",host,port);
         }
     }
     
 //    NSString *msg = [[NSString alloc]initWithData:data encoding:NSUTF8StringEncoding];
-//    NSLog(@"cmdsocket didReceiveData: %@",msg);
+//    //NSLog(@"cmdsocket didReceiveData: %@",msg);
     
     if ([self.delegate respondsToSelector:@selector(onCommandSocket:recvData:)])
     {
@@ -134,7 +135,7 @@ withFilterContext:(nullable id)filterContext
 
 - (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError  * _Nullable)error
 {
-    NSLog(@"cmdsocket:close：%@",error);
+    //NSLog(@"cmdsocket:close：%@",error);
 }
 
 @end

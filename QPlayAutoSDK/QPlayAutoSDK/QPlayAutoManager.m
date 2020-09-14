@@ -131,7 +131,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
             }
         }
         else {
-            NSLog(@"【ERROR】未找到 PCMData 回调: %@",key);
+            //NSLog(@"【ERROR】未找到 PCMData 回调: %@",key);
         }
     };
     self.dataSocket.onPicDataCallback = ^(NSDictionary * _Nonnull descDic, NSData * _Nonnull picData) {
@@ -195,7 +195,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 
 - (void)onConnectSuccess
 {
-    NSLog(@"连接成功 %@ %d %d",self.qmHost,self.qmResultPort,self.qmCommandPort);
+    //NSLog(@"连接成功 %@ %d %d",self.qmHost,self.qmResultPort,self.qmCommandPort);
     self.isConnected = YES;
     if (self.discoverSocket)
     {
@@ -364,7 +364,9 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 //查询歌曲播放信息
 - (void)requestMediaInfo:(NSString*)songId callback:(QPlayAutoRequestFinishBlock)block
 {
-    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:[self getRequestId] finishBlock:block];
+    NSInteger rNO = [self getRequestId];
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestNO:rNO finishBlock:block];
+//    NSLog(@"\n\n\n++++++++++++++++++++++++++++++++++\n%d\n++++++++++++++++++++++++++++++++++\n\n\n+", (int)rNO);
     [self.requestDic setObject:req forKey:req.key];
     NSString *msg = [NSString stringWithFormat:@"{ \"RequestID\":%ld,\"Request\":\"%@\",\"Arguments\":{\"SongID\":\"%@\"}}\r\n",(long)req.requestNo,kQPlayAutoCmd_MediaInfo,songId];
     [self.commandSocket sendMsg:msg];
@@ -383,7 +385,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 //查询歌曲播放信息
 - (void)requestPcmData:(NSString*)songId packageIndex:(NSUInteger)packageIndex callback:(QPlayAutoRequestFinishBlock)block {
     NSString *pcmRequestKey = [NSString stringWithFormat:@"PCMData_%@_%ld",songId, (long)packageIndex];
-    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestKey:pcmRequestKey finishBlock:block];
+    QPlayAutoRequestInfo *req = [[QPlayAutoRequestInfo alloc]initWithRequestKey:pcmRequestKey requestNO:[self getRequestId] finishBlock:block];
     [self.requestDic setObject:req forKey:req.key];
     NSString *msg = [NSString stringWithFormat:@"{\"RequestID\":%ld,\"Request\":\"%@\", \"Arguments\":{\"SongID\":\"%@\",\"PackageIndex\":%zd}}\r\n",(long)req.requestNo,kQPlayAutoCmd_PCMData,songId,packageIndex];
     [self.commandSocket sendMsg:msg];
@@ -534,7 +536,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     NSTimeInterval heartbeatTime = (now-self.lastHeartbeatTime);
     if (heartbeatTime>11)
     {
-        NSLog(@"已经%.1f秒没有收到心跳包了，连接断开",heartbeatTime);
+        //NSLog(@"已经%.1f秒没有收到心跳包了，连接断开",heartbeatTime);
         [self onDisconnect];
     }
 }
@@ -555,7 +557,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
         return;
     }
 
-    NSLog(@"==================CommandSocket_RECV：%@",cmdDict);
+    //NSLog(@"==================CommandSocket_RECV：%@",cmdDict);
     
     if ([cmd isEqualToString:kQPlayAutoCmd_CommInfos])
     {
@@ -580,7 +582,7 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     }
     else
     {
-        NSLog(@"未处理的命令:%@",cmd);
+        //NSLog(@"未处理的命令:%@",cmd);
     }
 }
 
@@ -589,14 +591,16 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 - (void)onResultSocket:(ResultSocket*)socket recvData:(NSData*)data
 {
     NSError *error = nil;
-    NSDictionary *resultDict =  [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
+    NSDictionary *resultDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error];
 
-    NSLog(@"==================ResultSocket_RECV：%@",resultDict);
+//    NSLog(@"==================ResultSocket_RECV：%@",resultDict);
+//    if ([resultDict.allKeys containsObject:@"MediaInfo"]) {
+//        NSLog(@"");
+//    }
     
     NSString *eventName = [resultDict objectForKey:@"Event"];
-    if (eventName.length>0)
-    {
-        NSLog(@"收到事件：%@",eventName);
+    if (eventName.length>0) {
+        //NSLog(@"收到事件：%@",eventName);
         //事件处理
         NSDictionary *dataDict = [resultDict objectForKey:@"Data"];
         
@@ -620,9 +624,8 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     }
     
     
-    id key  =  [[resultDict allKeys] firstObject];
-    if ([key isKindOfClass:[NSString class]] == NO)
-    {
+    id key = [[resultDict allKeys] firstObject];
+    if ([key isKindOfClass:[NSString class]] == NO) {
         return;
     }
     
@@ -634,21 +637,17 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
     
    
     QPlayAutoRequestInfo * req = [self.requestDic objectForKey:reqIdStr];
-    if(req)
-    {
-        if (req.finishBlock && ![strKey.lowercaseString containsString:@"pcmdata"])
-        {
+    if (req) {
+        if (req.finishBlock && ![strKey.lowercaseString containsString:@"pcmdata"]) {
             BOOL success = (err== nil) || ([self changeWithValue:err] == 0);
             req.finishBlock(success, contentDict);
         }
-        else
-        {
-            NSLog(@"请求：%@ 回调为空",strKey);
+        else {
+            //NSLog(@"请求：%@ 回调为空",strKey);
         }
     }
-    else
-    {
-        NSLog(@"注意了！！！没有找到对应的请求");
+    else {
+        //NSLog(@"注意了！！！没有找到对应的请求");
     }
     
 }
@@ -667,6 +666,6 @@ NSString *const kQPlayAutoCmd_Auth = @"Auth";
 }
 
 - (void)onDiscoversocket:(nonnull DiscoverSocket *)socket {
-    NSLog(@"onDiscoversocket");
+    //NSLog(@"onDiscoversocket");
 }
 @end

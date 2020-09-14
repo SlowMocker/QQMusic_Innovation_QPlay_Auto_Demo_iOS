@@ -36,7 +36,7 @@
     
     if (![self.discoverSocket bindToPort:0 error:&error])
     {
-        NSLog(@"Error binding: %@", error);
+        //NSLog(@"Error binding: %@", error);
         return;
     }
     
@@ -45,12 +45,12 @@
     
     if (![self.discoverSocket enableBroadcast:YES error:&error])
     {
-        NSLog(@"Error enableBroadcast: %@", error);
+        //NSLog(@"Error enableBroadcast: %@", error);
         return;
     }
     if (![self.discoverSocket beginReceiving:&error])
     {
-        NSLog(@"Error receiving: %@", error);
+        //NSLog(@"Error receiving: %@", error);
         return;
     }
     
@@ -76,15 +76,15 @@
 
 - (void)discover
 {
-//    NSLog(@"discovering... %@",self.broadcastIP);
+//    //NSLog(@"discovering... %@",self.broadcastIP);
 //    NSString *msg = [NSString stringWithFormat:@"{\"Discover\":{\"DeviceIP\":\"%@\",\"DeviceID\":\"%@\",\"DataPort\":%d, \"CommandPort\":%d, \"ResultPort\":%d, \"DeviceType\":%d, \"ConnectType\":1, \"DeviceBrand\":\"%@\", \"DeviceName\":\"%@\"}}\r\n",self.localIP,self.appInfo.deviceId,LocalDataPort,LocalCommandPort,LocalResultPort,self.appInfo.deviceType,self.appInfo.brand,self.appInfo.name];
 //    [self.discoverSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.broadcastIP  port:RemoteCommandPort withTimeout:-1 tag:0];
 
     //wuwenhao
     // 1: wifi 2: 蓝牙 3: 数据线 4: 本地 socket
-    NSLog(@"\n\n\ndiscovering... %@",self.broadcastIP);
+    //NSLog(@"\n\n\ndiscovering... %@",self.broadcastIP);
     NSString *msg = [NSString stringWithFormat:@"{\"Discover\":{\"DeviceIP\":\"%@\",\"DeviceID\":\"%@\",\"DataPort\":%d, \"CommandPort\":%d, \"ResultPort\":%d, \"DeviceType\":%d, \"ConnectType\":4, \"DeviceBrand\":\"%@\", \"DeviceName\":\"%@\"}}\r\n",self.localIP,self.appInfo.deviceId,LocalDataPort,LocalCommandPort,LocalResultPort,self.appInfo.deviceType,self.appInfo.brand,self.appInfo.name];
-    NSLog(@"discover msg: \n%@\n\n\n",msg);
+    //NSLog(@"discover msg: \n%@\n\n\n",msg);
     [self.discoverSocket sendData:[msg dataUsingEncoding:NSUTF8StringEncoding] toHost:self.broadcastIP  port:RemoteCommandPort withTimeout:-1 tag:0];
 }
 
@@ -93,24 +93,24 @@
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
 {
-    NSLog(@"discover:didSendDataWithTag:%ld",tag);
+    //NSLog(@"discover:didSendDataWithTag:%ld",tag);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didNotSendDataWithTag:(long)tag dueToError:(NSError * _Nullable)error
 {
-    NSLog(@"discover:didNotSendDataWithTag:%ld,error:%@",tag,error);
+    //NSLog(@"discover:didNotSendDataWithTag:%ld,error:%@",tag,error);
 }
 
 - (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
       fromAddress:(NSData *)address
 withFilterContext:(nullable id)filterContext
 {
-    NSLog(@"discover:recv data:%lu",(unsigned long)address.length);
+    //NSLog(@"discover:recv data:%lu",(unsigned long)address.length);
 }
 
 - (void)udpSocketDidClose:(GCDAsyncUdpSocket *)sock withError:(NSError  * _Nullable)error
 {
-    NSLog(@"discover:close error:%@",error);
+    //NSLog(@"discover:close error:%@",error);
 }
 
 @end

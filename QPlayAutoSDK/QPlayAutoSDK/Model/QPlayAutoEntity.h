@@ -81,7 +81,7 @@
 @property (nonatomic, copy) QPlayAutoRequestFinishBlock finishBlock;
 @property (nonatomic,strong,readonly) NSString *key;
 - (instancetype)initWithRequestNO:(NSInteger)requestNo finishBlock:(QPlayAutoRequestFinishBlock)finishBlock;
-- (instancetype)initWithRequestKey:(NSString *)requestKey finishBlock:(QPlayAutoRequestFinishBlock)finishBlock;
+- (instancetype)initWithRequestKey:(NSString *)requestKey requestNO:(NSInteger)requestNO finishBlock:(QPlayAutoRequestFinishBlock)finishBlock;
 
 @end
 
