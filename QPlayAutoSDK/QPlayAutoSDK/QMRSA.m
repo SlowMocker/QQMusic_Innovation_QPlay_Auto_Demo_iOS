@@ -462,7 +462,7 @@ static NSData *base64_decode(NSString *str){
     size_t hashBytesSize = CC_SHA256_DIGEST_LENGTH;
     uint8_t* hashBytes = malloc(hashBytesSize);
     if (!CC_SHA256([plainData bytes], (CC_LONG)[plainData length], hashBytes)) {
-        return nil;
+        return NO;
     }
     
     OSStatus status = SecKeyRawVerify(publicKey,

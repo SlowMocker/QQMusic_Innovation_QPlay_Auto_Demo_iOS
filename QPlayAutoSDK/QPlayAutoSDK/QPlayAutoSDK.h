@@ -11,6 +11,8 @@
 
 #define APP_DEVICE_TYPE (3)
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  QPlayAutoSDK回调
  */
@@ -20,7 +22,7 @@
 - (void)onQPlayAutoConnectStateChanged:(QPlayAutoConnectState)newState;
 
 //变化状态变化回调
-- (void)onQPlayAutoPlayStateChanged:(QPlayAutoPlayState)playState song:(QPlayAutoListItem*)song position:(NSInteger)position;
+- (void)onQPlayAutoPlayStateChanged:(QPlayAutoPlayState)playState song:(QPlayAutoListItem *)song position:(NSInteger)position;
 
 //歌曲收藏状态变化
 - (void)onSongFavoriteStateChange:(NSString*)songID isFavorite:(BOOL)isFavorite;
@@ -234,3 +236,4 @@
           firstPage:(BOOL)firstPage
             calback:(QPlayAutoRequestFinishBlock _Nullable )block;
 @end
+NS_ASSUME_NONNULL_END

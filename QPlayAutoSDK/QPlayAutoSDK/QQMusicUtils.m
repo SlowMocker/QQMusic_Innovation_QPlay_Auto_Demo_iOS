@@ -149,14 +149,14 @@
     if (nil != *error)
     {
         NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        //NSLog(@"parse json error(%@), data:(%@)", *error, json);
+        NSLog(@"parse json error(%@), data:(%@)", *error, json);
     }
     if ((nil != obj)
         && (Nil != targetClass)
         && (NO == [obj isKindOfClass:targetClass]))
     {
         NSString *json = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-        //NSLog(@"parse json expect class:(%@), actually:(%@) data:(%@)", targetClass, [obj class], json);
+        NSLog(@"parse json expect class:(%@), actually:(%@) data:(%@)", targetClass, [obj class], json);
         
         obj = nil;  // 类型不对，返回nil
     }
