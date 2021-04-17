@@ -166,6 +166,10 @@ static NSString * const QQMusic_PubKey = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBg
     QPlayAutoAppInfo *appInfo = [QPlayAutoManager sharedInstance].appInfo;
     if(appInfo==nil || appInfo.appId.length==0)
     {
+        if (block) {
+            block(false, @{@"errMsg": @"App info Error!!!"});
+            NSLog(@"App info Error!!!");
+        }
         return 0;
     }
     return [[QPlayAutoManager sharedInstance] requestItems:parentID
@@ -402,6 +406,40 @@ static NSString * const QQMusic_PubKey = @"MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBg
     {
         [self.delegate onPlayPausedByTimeoff];
     }
+}
+
+/// 查询歌曲信息（主要用于开启 QQ 音乐 APP PCM 数据解析）
+/// @param songId 歌曲 id
+/// @param block 回调
++ (void) requestMediaInfo:(NSString*)songId callback:(QPlayAutoRequestFinishBlock)block {
+    [[QPlayAutoManager sharedInstance] requestMediaInfo:songId callback:block];
+}
+/// 请求歌曲 PCM 数据（调用前需要先使用 requestMediaInfo: 开启 PCM 数据解析）
+/// @param songId 歌曲 id
+/// @param packageIndex 包 index
+/// @param block 回调
++ (void) requestPcmData:(NSString*)songId packageIndex:(NSUInteger)packageIndex callback:(QPlayAutoRequestFinishBlock)block {
+    [[QPlayAutoManager sharedInstance]requestPcmData:songId packageIndex:packageIndex callback:block];
+}
+/// 查询歌曲图片
+/// @param songId 歌曲 id
+/// @param pageIndex 子页 index
++ (void) requestAlbumImage:(NSString*)songId pageIndex:(NSUInteger)pageIndex callback:(QPlayAutoRequestFinishBlock)block {
+    [[QPlayAutoManager sharedInstance] requestAlbumImage:songId pageIndex:pageIndex callback:block];
+}
+/// 查询歌词
+/// @param songId 歌曲 id
+/// @param lyricType 0: QRC | 1: LRC
+/// @param pageIndex 子页 index
++ (void) requestLyric:(NSString*)songId lyricType:(NSInteger)lyricType pageIndex:(NSUInteger)pageIndex callback:(QPlayAutoRequestFinishBlock)block {
+    [[QPlayAutoManager sharedInstance] requestLyric:songId lyricType:lyricType pageIndex:pageIndex callback:block];
+}
+/// 停止 data socket 数据传输
+/// @param songId 歌曲 id
+/// @param type 数据类型 1: PCM 数据 | 2: 图片数据 | 3: 歌词数据
+/// @param block 回调
++ (void) stopData:(NSString*)songId dataType:(NSInteger)type callback:(QPlayAutoRequestFinishBlock)block {
+    [[QPlayAutoManager sharedInstance] stopData:songId dataType:type callback:block];
 }
 
 @end

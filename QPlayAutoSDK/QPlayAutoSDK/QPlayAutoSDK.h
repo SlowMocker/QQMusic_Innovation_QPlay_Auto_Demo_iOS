@@ -235,5 +235,32 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSInteger)search:(NSString*_Nullable)keyword
           firstPage:(BOOL)firstPage
             calback:(QPlayAutoRequestFinishBlock _Nullable )block;
+
+
+/// 查询歌曲信息（主要用于开启 QQ 音乐 APP PCM 数据解析）
+/// @param songId 歌曲 id
+/// @param block 回调
++ (void) requestMediaInfo:(NSString*)songId callback:(QPlayAutoRequestFinishBlock)block;
+/// 请求歌曲 PCM 数据（调用前需要先使用 requestMediaInfo: 开启 PCM 数据解析）
+/// @param songId 歌曲 id
+/// @param packageIndex 包 index
+/// @param block 回调
++ (void) requestPcmData:(NSString*)songId packageIndex:(NSUInteger)packageIndex callback:(QPlayAutoRequestFinishBlock)block;
+/// 查询歌曲图片
+/// @param songId 歌曲 id
+/// @param pageIndex 子页 index
++ (void) requestAlbumImage:(NSString*)songId pageIndex:(NSUInteger)pageIndex callback:(QPlayAutoRequestFinishBlock)block;
+/// 查询歌词
+/// @param songId 歌曲 id
+/// @param lyricType 0: QRC | 1: LRC
+/// @param pageIndex 子页 index
++ (void) requestLyric:(NSString*)songId lyricType:(NSInteger)lyricType pageIndex:(NSUInteger)pageIndex callback:(QPlayAutoRequestFinishBlock)block;
+/// 停止 data socket 数据传输
+/// @param songId 歌曲 id
+/// @param type 数据类型 1: PCM 数据 | 2: 图片数据 | 3: 歌词数据
+/// @param block 回调
++ (void) stopData:(NSString*)songId dataType:(NSInteger)type callback:(QPlayAutoRequestFinishBlock)block;
+
+
 @end
 NS_ASSUME_NONNULL_END

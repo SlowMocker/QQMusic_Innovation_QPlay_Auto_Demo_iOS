@@ -10,14 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-
-
-
 @interface DataSocket : NSObject
 
-// wuwenhao
+/// PCM 数据回调
 @property (nonatomic , copy) void (^onPcmDataCallback)(NSDictionary *descDic, NSData *pcmData);
+/// 图片数据回调
 @property (nonatomic , copy) void (^onPicDataCallback)(NSDictionary *descDic, NSData *picData);
+/// 歌词数据回调
 @property (nonatomic , copy) void (^onLyricDataCallback)(NSDictionary *descDic, NSData *lyricData);
 
 - (void)start;

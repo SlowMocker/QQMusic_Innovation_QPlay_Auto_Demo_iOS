@@ -151,6 +151,7 @@ static NSData *base64_decode(NSString *str){
 	SecKeyRef keyRef = nil;
 	status = SecItemCopyMatching((__bridge CFDictionaryRef)publicKey, (CFTypeRef *)&keyRef);
 	if(status != noErr){
+        CFRelease(keyRef);
 		return nil;
 	}
 	return keyRef;
@@ -220,6 +221,7 @@ static NSData *base64_decode(NSString *str){
 	SecKeyRef keyRef = nil;
 	status = SecItemCopyMatching((__bridge CFDictionaryRef)privateKey, (CFTypeRef *)&keyRef);
 	if(status != noErr){
+        CFRelease(keyRef);
 		return nil;
 	}
 	return keyRef;
@@ -291,7 +293,8 @@ static NSData *base64_decode(NSString *str){
 	if(!keyRef){
 		return nil;
 	}
-	return [QMRSA encryptData:data withKeyRef:keyRef isSign:YES];
+    NSData *enData = [QMRSA encryptData:data withKeyRef:keyRef isSign:YES];
+	return enData;
 }
 
 + (NSData *)decryptData:(NSData *)data withKeyRef:(SecKeyRef) keyRef{
@@ -363,7 +366,10 @@ static NSData *base64_decode(NSString *str){
 	if(!keyRef){
 		return nil;
 	}
-	return [QMRSA decryptData:data withKeyRef:keyRef];
+    
+    NSData *deData = [QMRSA decryptData:data withKeyRef:keyRef];
+    
+    return deData;
 }
 
 /* END: Encryption & Decryption with RSA private key */
@@ -412,6 +418,7 @@ static NSData *base64_decode(NSString *str){
     NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
     SecKeyRef keyRef = [self addPrivateKey:privKey];
     NSData *signData = [self PKCSSignBytesSHA256withRSA:data privKey:keyRef];
+    CFRelease(keyRef);
     NSString *ret = base64_encode_data(signData);
     return ret;
 }
@@ -451,7 +458,9 @@ static NSData *base64_decode(NSString *str){
     NSData *data = [str dataUsingEncoding:NSUTF8StringEncoding];
     NSData *singData =  base64_decode(signString);
     SecKeyRef keyRef = [QMRSA addPublicKey:pubKey];
-    return [self PKCSVerifyBytesSHA256withRSA:data signature:singData publicKey:keyRef];
+    BOOL bl = [self PKCSVerifyBytesSHA256withRSA:data signature:singData publicKey:keyRef];
+    CFRelease(keyRef);
+    return bl;
 }
 
 + (BOOL)PKCSVerifyBytesSHA256withRSA:(NSData*)plainData signature:(NSData*)signature publicKey:(SecKeyRef)publicKey
@@ -471,6 +480,8 @@ static NSData *base64_decode(NSString *str){
                                       hashBytesSize,
                                       signedHashBytes,
                                       signedHashBytesSize);
+    
+    free(hashBytes);
     
     return status == errSecSuccess;
 }

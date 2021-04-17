@@ -13,87 +13,78 @@
 
 @interface DataSocket()<GCDAsyncSocketDelegate>
 
-@property (nonatomic,strong) GCDAsyncSocket *tcpSocket;
-@property (nonatomic,strong) GCDAsyncSocket *qmSocket;
+/// 监听 socket
+@property (nonatomic , strong) GCDAsyncSocket *tcpSocket;
+/// 已连接 socket
+@property (nonatomic , strong) GCDAsyncSocket *qmSocket;
 
-@property (nonatomic , strong) NSMutableDictionary *descPcmDicM;
+@property (nonatomic , strong) NSMutableDictionary *pcmHeaderDicM;
 @property (nonatomic , strong) NSMutableData *pcmDataM;
 
-@property (nonatomic , strong) NSMutableDictionary *descPicDicM;
+@property (nonatomic , strong) NSMutableDictionary *picHeaderDicM;
 @property (nonatomic , strong) NSMutableData *picDataM;
 
-@property (nonatomic , strong) NSMutableDictionary *descLyricDicM;
+@property (nonatomic , strong) NSMutableDictionary *lyricHeaderDicM;
 @property (nonatomic , strong) NSMutableData *lyricDataM;
 
 @end
 
 @implementation DataSocket
 
-- (instancetype)init {
+- (instancetype) init {
     self = [super init];
     if (self) {
-        self.descPcmDicM = NSMutableDictionary.new;
+        self.pcmHeaderDicM = NSMutableDictionary.new;
         self.pcmDataM = NSMutableData.new;
-        self.descPicDicM = NSMutableDictionary.new;
+        self.picHeaderDicM = NSMutableDictionary.new;
         self.picDataM = NSMutableData.new;
-        self.descLyricDicM = NSMutableDictionary.new;
+        self.lyricHeaderDicM = NSMutableDictionary.new;
         self.lyricDataM = NSMutableData.new;
     }
     return self;
 }
 
-- (void)start
-{
-    if(self.tcpSocket!=nil)
-    {
+- (void) start {
+    if (self.tcpSocket != nil) {
         return;
     }
     self.tcpSocket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     //    [self.tcpSocket setAutoDisconnectOnClosedReadStream:NO];
     NSError *error = nil;
-    if (![self.tcpSocket acceptOnPort:LocalDataPort error:&error])
-    {
+    if (![self.tcpSocket acceptOnPort:LocalDataPort error:&error]) {
         //NSLog(@"Error acceptOnPort: %@", error);
         return;
     }
 }
 
-- (void)stop
-{
-    if(self.qmSocket!=nil)
-    {
-        if(self.qmSocket.isConnected)
-            [self.qmSocket disconnect];
+- (void) stop {
+    if (self.qmSocket != nil) {
+        if (self.qmSocket.isConnected) [self.qmSocket disconnect];
         self.qmSocket = nil;
     }
-    if(self.tcpSocket!=nil)
-    {
-        if(self.tcpSocket.isConnected)
-            [self.tcpSocket disconnect];
+    if (self.tcpSocket != nil) {
+        if(self.tcpSocket.isConnected) [self.tcpSocket disconnect];
         self.tcpSocket = nil;
     }
 }
 
 #pragma mark GCDAsyncSocketDelegate
 
-- (void)socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket
-{
-//    //NSLog(@"******************didAcceptNewSocket");
-    if(newSocket==nil)
+- (void) socket:(GCDAsyncSocket *)sock didAcceptNewSocket:(GCDAsyncSocket *)newSocket {
+    if (newSocket == nil) {
         return;
-    if(self.qmSocket!=nil)
-    {
-//        //NSLog(@"dataSocket cliet socket is exist already. new:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
+    }
+        
+    if (self.qmSocket!=nil) {
+        NSLog(@"【WARNNING】dataSocket cliet socket is exist already. new:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
         return;
     }
     self.qmSocket = newSocket;
     [self.qmSocket readDataWithTimeout:-1 tag:0];
-//    //NSLog(@"dataSocket didAcceptNewSocket:%@ %d",newSocket.connectedHost,newSocket.connectedPort);
-    
 }
 
 - (void) socketDidDisconnect:(GCDAsyncSocket *)sock withError:(NSError *)err {
-//    //NSLog(@"******************socketDidDisconnect:%@",err);
+    NSLog(@"【ERROR】data socket disconnect: %@",err);
 }
 
 - (void) socket:(GCDAsyncSocket *)sock didReadData:(NSData *)data withTag:(long)tag {
@@ -115,60 +106,69 @@
         if ([[descDic allKeys] containsObject:@"PCMData"]) {
             // 请求到 JSON header
             [self flushPcmData];
-            self.descPcmDicM = [descDic mutableCopy];
+            if (self.pcmDataM.length > 0) {
+                NSLog(@"\nWARNNING】获取到异常的 PCM 数据\n");
+            }
+            self.pcmHeaderDicM = [descDic mutableCopy];
         }
-        if ([[self.descPcmDicM allKeys] containsObject:@"PCMData"]) {
+        if ([[self.pcmHeaderDicM allKeys] containsObject:@"PCMData"]) {
             [self.pcmDataM appendData:partData];
         }
 
         if ([[descDic allKeys] containsObject:@"PICData"]) {
             // 请求到 JSON header
             [self flushPicData];
-            self.descPicDicM = [descDic mutableCopy];
+            if (self.picDataM.length > 0) {
+                NSLog(@"\n【WARNNING】获取到异常的 PIC 数据\n");
+            }
+            self.picHeaderDicM = [descDic mutableCopy];
         }
-        if ([[self.descPicDicM allKeys] containsObject:@"PICData"]) {
+        if ([[self.picHeaderDicM allKeys] containsObject:@"PICData"]) {
             [self.picDataM appendData:partData];
         }
 
         if ([[descDic allKeys] containsObject:@"LyricData"]) {
             // 请求到 JSON header
             [self flushLyricData];
-            self.descLyricDicM = [descDic mutableCopy];
+            if (self.picDataM.length > 0) {
+                NSLog(@"\n【WARNNING】获取到异常的 LYRIC 数据\n");
+            }
+            self.lyricHeaderDicM = [descDic mutableCopy];
         }
-        if ([[self.descLyricDicM allKeys] containsObject:@"LyricData"]) {
+        if ([[self.lyricHeaderDicM allKeys] containsObject:@"LyricData"]) {
             [self.lyricDataM appendData:partData];
         }
 
     }];
 
     // PCM
-    if ([self.descPcmDicM.allKeys containsObject:@"PCMData"]) {
-        if (self.pcmDataM.length >= ((NSNumber *)self.descPcmDicM[@"PCMData"][@"Length"]).integerValue && self.onPcmDataCallback) {
+    if ([self.pcmHeaderDicM.allKeys containsObject:@"PCMData"]) {
+        if (self.pcmDataM.length >= ((NSNumber *)self.pcmHeaderDicM[@"PCMData"][@"Length"]).integerValue && self.onPcmDataCallback) {
             //NSLog(@"\ndesc: %@",self.descPcmDicM);
             //NSLog(@"pcm return size: %ld",(long)self.pcmDataM.length);
-            self.onPcmDataCallback(self.descPcmDicM, self.pcmDataM);
+            self.onPcmDataCallback(self.pcmHeaderDicM, self.pcmDataM);
             [self flushPcmData];
         }
     }
 
     // PIC
-    if ([self.descPicDicM.allKeys containsObject:@"PICData"]) {
+    if ([self.picHeaderDicM.allKeys containsObject:@"PICData"]) {
 
-        if (self.picDataM.length >= ((NSNumber *)self.descPicDicM[@"PICData"][@"Length"]).integerValue && self.onPicDataCallback) {
+        if (self.picDataM.length >= ((NSNumber *)self.picHeaderDicM[@"PICData"][@"Length"]).integerValue && self.onPicDataCallback) {
             //NSLog(@"\ndesc: %@",self.descPicDicM);
             //NSLog(@"pic return size: %ld",(long)self.picDataM.length);
-            self.onPicDataCallback(self.descPicDicM, self.picDataM);
+            self.onPicDataCallback(self.picHeaderDicM, self.picDataM);
             [self flushPicData];
         }
     }
 
     // Lyric
-    if ([self.descLyricDicM.allKeys containsObject:@"LyricData"]) {
+    if ([self.lyricHeaderDicM.allKeys containsObject:@"LyricData"]) {
 
-        if (self.lyricDataM.length >= ((NSNumber *)self.descLyricDicM[@"LyricData"][@"Length"]).integerValue && self.onLyricDataCallback) {
+        if (self.lyricDataM.length >= ((NSNumber *)self.lyricHeaderDicM[@"LyricData"][@"Length"]).integerValue && self.onLyricDataCallback) {
             //NSLog(@"\ndesc: %@",self.descLyricDicM);
             //NSLog(@"lyric return size: %ld",(long)self.lyricDataM.length);
-            self.onLyricDataCallback(self.descLyricDicM, self.lyricDataM);
+            self.onLyricDataCallback(self.lyricHeaderDicM, self.lyricDataM);
             [self flushLyricData];
         }
     }
@@ -180,71 +180,75 @@
 #pragma mark - private methods
 - (void) parseData:(NSData *)data callback:(void (^)(NSDictionary *descDic, NSData *partData, NSString *errDes))callback {
     if (data.length <= 0) {
-        //NSLog(@"【ERROR】: data socket 返回数据异常！！！");
+        NSLog(@"【ERROR】: data socket 返回数据异常！！！");
         if (callback) callback(nil, nil, @"data socket 返回数据异常");
     }
 
-    // 已经有了 JSON header，data 为纯数据
-    if ([self.descPcmDicM.allKeys containsObject:@"PCMData"] ||
-        [self.descPicDicM.allKeys containsObject:@"PICData"] ||
-        [self.descLyricDicM.allKeys containsObject:@"LyricData"]) {
+    // 已经有了 JSON header，data 是纯数据
+    if ([self.pcmHeaderDicM.allKeys containsObject:@"PCMData"] ||
+        [self.picHeaderDicM.allKeys containsObject:@"PICData"] ||
+        [self.lyricHeaderDicM.allKeys containsObject:@"LyricData"]) {
         if (callback) callback(nil, data, nil);
         return;
     }
 
-    NSData *sData = [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
-
-    NSData *searchData = [data subdataWithRange:NSMakeRange(0, data.length)];
-    NSRange sRange = [searchData rangeOfData:sData options:NSDataSearchBackwards range:NSMakeRange(0, searchData.length)];
-    NSRange searchRange = [searchData rangeOfData:sData options:NSDataSearchBackwards range:NSMakeRange(0, sRange.location)];
-    while (searchRange.length != 0) {
-        searchRange = [searchData rangeOfData:sData options:NSDataSearchBackwards range:NSMakeRange(0, sRange.location)];
-        if (searchRange.length != 0) {
-            sRange = searchRange;
-        }
-    }
-
-    //    //NSLog(@"**************************************************************header: %ld",(long)(sRange.location + 2));
-
-    // 未找到，是纯数据
-    if (sRange.length == 0) {
+    // 查找分隔符
+    NSData *breakData = [@"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *copyData = [data subdataWithRange:NSMakeRange(0, data.length)];
+    
+    // first break range
+    // iOS API 只支持后序查找
+    NSRange firstBreakRange = [copyData rangeOfData:breakData options:NSDataSearchBackwards range:NSMakeRange(0, copyData.length)];
+    // 未找到分隔符，data 是纯数据
+    if (firstBreakRange.length == 0) {
         if (callback) callback(nil, data, nil);
+        return;
     }
-    else {
-        NSData *descData = [data subdataWithRange:NSMakeRange(0, sRange.location)];
-        NSUInteger startIndex = sRange.location+sRange.length;
-        NSData *pData = [data subdataWithRange:NSMakeRange(startIndex, data.length - startIndex)];
-        NSError *error = nil;
-        NSDictionary *descDic = [NSJSONSerialization JSONObjectWithData:descData options:0 error:&error];
-        if (error) {
-            if (callback) callback(nil, nil, @"JSON 头解析失败");
-            return;
+    
+    // 尝试去找下一个 break range
+    NSRange nextBreakRange = [copyData rangeOfData:breakData options:NSDataSearchBackwards range:NSMakeRange(0, firstBreakRange.location)];
+    while (nextBreakRange.length != 0) {
+        nextBreakRange = [copyData rangeOfData:breakData options:NSDataSearchBackwards range:NSMakeRange(0, firstBreakRange.location)];
+        if (nextBreakRange.length != 0) {
+            firstBreakRange = nextBreakRange;
         }
-        if (callback) callback(descDic, pData, nil);
     }
+
+    // data 描述信息
+    NSData *headerData = [data subdataWithRange:NSMakeRange(0, firstBreakRange.location)];
+    NSUInteger startIndex = firstBreakRange.location + firstBreakRange.length;
+    // 截取的 PCM data
+    NSData *pcmData = [data subdataWithRange:NSMakeRange(startIndex, data.length - startIndex)];
+    NSError *error = nil;
+    NSDictionary *descDic = [NSJSONSerialization JSONObjectWithData:headerData options:0 error:&error];
+    if (error) {
+        if (callback) callback(nil, nil, @"JSON 头解析失败");
+        return;
+    }
+    if (callback) callback(descDic, pcmData, nil);
 }
 
 - (void) flushData {
-    self.descPcmDicM = NSMutableDictionary.new;
+    self.pcmHeaderDicM = NSMutableDictionary.new;
     self.pcmDataM = NSMutableData.new;
-    self.descPicDicM = NSMutableDictionary.new;
+    self.picHeaderDicM = NSMutableDictionary.new;
     self.picDataM = NSMutableData.new;
-    self.descLyricDicM = NSMutableDictionary.new;
+    self.lyricHeaderDicM = NSMutableDictionary.new;
     self.lyricDataM = NSMutableData.new;
 }
 
 - (void) flushPcmData {
-    self.descPcmDicM = NSMutableDictionary.new;
+    self.pcmHeaderDicM = NSMutableDictionary.new;
     self.pcmDataM = NSMutableData.new;
 }
 
 - (void) flushPicData {
-    self.descPicDicM = NSMutableDictionary.new;
+    self.picHeaderDicM = NSMutableDictionary.new;
     self.picDataM = NSMutableData.new;
 }
 
 - (void) flushLyricData {
-    self.descLyricDicM = NSMutableDictionary.new;
+    self.lyricHeaderDicM = NSMutableDictionary.new;
     self.lyricDataM = NSMutableData.new;
 }
 @end
